@@ -2682,15 +2682,27 @@ class TestAcceptance(TestCase):
         result = u"**HTML** <a href='#'>link</a>"
         self.assertRender(template, context, result)
 
-    def test_periods_in_variable(self):
-        template = u"{{[a.b]}} {{[a.b.c].name}}: {{#if [a.b]}}AB_OK{{/if}} {{#if [a.b.c].name}}ABC_OK{{/if}}"
+    def test_existence_at_specific_index(self):
+        template = u"{{#if projects.[0].name}}{{projects.[0].name}}{{/if}}\n{{#if projects.1.name}}{{projects.1.name}}{{/if}}{{projects.2.name}}"
         context = {
-            "a.b": "AB",
-            "a.b.c": {
-                "name": "ABC"
-            }
+            "projects": [{
+                "name": "web-app"
+            }]
         }
-        result = u"AB ABC: AB_OK ABC_OK"
+        result = u"web-app\n"
+        self.assertRender(template, context, result)
+
+        template = u"{{#if a.0.1}}{{a.0.1.name}}{{/if}}|{{a.1.0.name}}|{{a.0.0.name}}|{{a.0.3.name}}"
+        context = {
+            "a": [
+                [
+                    {"name": "a00"},
+                    {"name": "a01"},
+                ]
+            ]
+        }
+        result = u"a01||a00|"
+
         self.assertRender(template, context, result)
 
     def test_template(self):
