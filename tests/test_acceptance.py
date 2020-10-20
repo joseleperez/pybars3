@@ -2702,6 +2702,7 @@ class TestAcceptance(TestCase):
             ]
         }
         result = u"a01||a00|"
+
         self.assertRender(template, context, result)
 
     def test_template(self):
